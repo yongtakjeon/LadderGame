@@ -3,10 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import BetProvider from './store/bet-context';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BetProvider>
+      <App />
+    </BetProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
