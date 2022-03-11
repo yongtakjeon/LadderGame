@@ -1,0 +1,24 @@
+.entire {
+  overflow-x: scroll;
+  margin-top: 20px;
+}
+.characters {
+  white-space: nowrap;
+  text-align: center;
+}
+.character {
+  margin: 0 10px;
+}
+canvas {
+  display: block;
+  margin: 0 auto;
+}
+.bets {
+  white-space: nowrap;
+  text-align: center;
+}
+.bet {
+  display: inline-block;
+  width: 70px;
+  margin: 0 2.5px;
+}

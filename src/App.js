@@ -2,6 +2,7 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Main from './pages/Main';
 import Ladder1 from './pages/Ladder1';
+import Ladder2 from './pages/Ladder2';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Routes>
           <Route exact path="/" element={<Main />} />
           <Route exact path="/ladder1" element={<Ladder1 />} />
+          <Route exact path="/ladder2" element={<Ladder2 />} />
         </Routes>
       </Router>
     </div>

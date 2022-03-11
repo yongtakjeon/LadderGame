@@ -5,10 +5,11 @@ import { BetContext } from '../store/bet-context';
 import styles from './Ladder1.module.css';
 
 const Ladder1 = () => {
-    const headerContent = "Write down your bets.";
     const context = useContext(BetContext);
     const navigate = useNavigate();
+    const headerContent = "Write down your bets.";
 
+    // for displaying characters and <input> tags
     let betNums = [];
     for (let i = 0; i < context.numOfBets; i++) {
         betNums.push(i + 1);
@@ -34,9 +35,30 @@ const Ladder1 = () => {
     };
 
     const gameStartHandler = () => {
-        // 1. save the value of each <input> tag to 'bets' context
+        // check if there is an empty bet
+        let bets = [];
+        let isAllEntered = true;
 
-        // 2. make the ladder
+        for (let i = 0; i < context.numOfBets; i++) {
+            bets.push(document.getElementById(i + 1).value);
+        }
+
+        for (let i = 0; i < context.numOfBets; i++) {
+            if (bets[i] === '') {
+                isAllEntered = false;
+            }
+        }
+
+        // if all the bets are entered
+        if (isAllEntered === true) {
+            // save the bets in Context, and navigate to 'ladder2' page
+            context.setBets(bets);
+            navigate('/ladder2');
+        }
+        // if there is an empty bet
+        else {
+            alert('Enter all the bets!');
+        }
     };
 
     useEffect(() => {
@@ -48,16 +70,16 @@ const Ladder1 = () => {
         <div className={styles.entire}>
             <div className={styles.characters}>
                 {
-                    betNums.map((betNum) => {
-                        return <img alt={betNum} src={`/images/${betNum}.png`} width="55" className={styles.character}></img>;
+                    betNums.map((betNum, index) => {
+                        return <img key={index} alt={betNum} src={`/images/${betNum}.png`} width="55" className={styles.character}></img>;
                     })
                 }
             </div>
             <canvas id="canvas" width={context.numOfBets * 75} height="415"></canvas>
             <div className={styles.inputs}>
                 {
-                    betNums.map((betNum) => {
-                        return <input size="5" className={styles.input}></input>;
+                    betNums.map((betNum, index) => {
+                        return <input key={index} id={betNum} size="5" required className={styles.input}></input>;
                     })
                 }
             </div>
