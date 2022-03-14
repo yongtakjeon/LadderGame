@@ -21,6 +21,10 @@ const Ladder2 = () => {
     let paths = []; // the paths of each character
     let resultsBetIdx = [];
     let selectedCharacterIdx = -1;
+    let isBetsChecked = []; // for highlighting for the bets which already have been checked
+    for (let i = 0; i < context.numOfBets; i++) {
+        isBetsChecked.push(false);
+    }
 
     const drawLadder = () => {
         let canvas = document.getElementById('canvas');
@@ -134,7 +138,7 @@ const Ladder2 = () => {
         }
 
         // 2. save the results
-        // The first element of 'resultsBetIdx' is the index of bets for the first character,
+        // The first element of 'resultsBetIdx' is the index of 'context.bets' for the first character,
         // and the second, and the third...
         for (let i = 0; i < paths.length; i++) {
             resultsBetIdx.push((paths[i][paths[i].length - 1].horizontal - 38) / 75);
@@ -147,41 +151,30 @@ const Ladder2 = () => {
         if (canvas.getContext) {
             let ctx = canvas.getContext('2d');
 
-            if (selectedCharacterIdx === characterNum) { // when same character is clicked twice in a row
-                // clearing the selected path
+            // if selecting the character is not the first time, clear previous selected path
+            if (selectedCharacterIdx !== -1) {
                 ctx.strokeStyle = 'black';
                 ctx.beginPath();
-                ctx.moveTo(paths[characterNum][0].horizontal, paths[characterNum][0].vertical);
-                for (let i = 1; i < paths[characterNum].length; i++) {
-                    ctx.lineTo(paths[characterNum][i].horizontal, paths[characterNum][i].vertical);
+                ctx.moveTo(paths[selectedCharacterIdx][0].horizontal, paths[selectedCharacterIdx][0].vertical);
+                for (let i = 1; i < paths[selectedCharacterIdx].length; i++) {
+                    ctx.lineTo(paths[selectedCharacterIdx][i].horizontal, paths[selectedCharacterIdx][i].vertical);
                 }
                 ctx.stroke();
-
-                selectedCharacterIdx = -1;
             }
-            else {
-                // clearing previous selected path
-                if (selectedCharacterIdx !== -1) {
-                    ctx.strokeStyle = 'black';
-                    ctx.beginPath();
-                    ctx.moveTo(paths[selectedCharacterIdx][0].horizontal, paths[selectedCharacterIdx][0].vertical);
-                    for (let i = 1; i < paths[selectedCharacterIdx].length; i++) {
-                        ctx.lineTo(paths[selectedCharacterIdx][i].horizontal, paths[selectedCharacterIdx][i].vertical);
-                    }
-                    ctx.stroke();
-                }
 
-                // go down the ladder
-                ctx.strokeStyle = 'red';
-                ctx.beginPath();
-                ctx.moveTo(paths[characterNum][0].horizontal, paths[characterNum][0].vertical);
-                for (let i = 1; i < paths[characterNum].length; i++) {
-                    ctx.lineTo(paths[characterNum][i].horizontal, paths[characterNum][i].vertical);
-                }
-                ctx.stroke();
-
-                selectedCharacterIdx = characterNum;
+            // go down the ladder
+            ctx.strokeStyle = 'red';
+            ctx.beginPath();
+            ctx.moveTo(paths[characterNum][0].horizontal, paths[characterNum][0].vertical);
+            for (let i = 1; i < paths[characterNum].length; i++) {
+                ctx.lineTo(paths[characterNum][i].horizontal, paths[characterNum][i].vertical);
             }
+            ctx.stroke();
+
+            selectedCharacterIdx = characterNum;
+
+            // highlight for the bet which was checked
+            document.getElementById(`bet${resultsBetIdx[characterNum]}`).style.color = 'red';
         }
     };
 
@@ -210,7 +203,7 @@ const Ladder2 = () => {
             <div className={styles.bets}>
                 {
                     context.bets.map((bet, index) => {
-                        return <span key={index} className={styles.bet}>{bet}</span>;
+                        return <span key={index} id={`bet${index}`} className={styles.bet}>{bet}</span>;
                     })
                 }
             </div>
