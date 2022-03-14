@@ -28,7 +28,7 @@ const Ladder1 = () => {
             for (let i = 0; i < context.numOfBets; i++) {
                 ctx.beginPath();
                 ctx.moveTo(38 + i * 75, 20);
-                ctx.lineTo(38 + i * 75, 400);
+                ctx.lineTo(38 + i * 75, 360);
                 ctx.stroke();
             }
         }
@@ -75,11 +75,11 @@ const Ladder1 = () => {
                     })
                 }
             </div>
-            <canvas id="canvas" width={context.numOfBets * 75} height="415"></canvas>
+            <canvas id="canvas" width={context.numOfBets * 75} height="375"></canvas>
             <div className={styles.inputs}>
                 {
                     betNums.map((betNum, index) => {
-                        return <input key={index} id={betNum} size="5" required className={styles.input}></input>;
+                        return <input key={index} id={betNum} size="5" className={styles.input}></input>;
                     })
                 }
             </div>
