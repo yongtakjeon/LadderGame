@@ -9,6 +9,19 @@ const Ladder2 = () => {
     const navigate = useNavigate();
     const headerContent = 'After selecting each Marvel character for each person, click on the character to see the results.';
 
+    let ladder = [
+        [1],
+        [1],
+        [1],
+        [1],
+        [1],
+        [1],
+        [1]
+    ];
+    let paths = []; // the paths of each character
+    let resultsBetIdx = [];
+    let selectedCharacterIdx = -1;
+
     const drawLadder = () => {
         let canvas = document.getElementById('canvas');
 
@@ -27,16 +40,6 @@ const Ladder2 = () => {
             }
 
             // 2. for the drawing full ladder
-            let ladder = [
-                [1],
-                [1],
-                [1],
-                [1],
-                [1],
-                [1],
-                [1]
-            ];
-
             // 2a) making basic ladder with 0, 1
             for (let i = 0; i < ladder.length; i++) {
                 for (let j = 1; j < context.numOfBets; j++) {
@@ -97,12 +100,99 @@ const Ladder2 = () => {
                 }
             }
             ctx.stroke();
-
         }
+    };
+
+    const getResults = () => {
+        // 1. go down the ladder and save the each path
+        // The number of the paths would be the same with the number of bets.
+        for (let i = 0; i < context.numOfBets; i++) {
+            let x = 0;
+            let y = i * 2;
+            let thePath = [{ horizontal: 38 + 37.5 * y, vertical: 20 }];
+            thePath.push({ horizontal: 38 + 37.5 * y, vertical: 70 });
+            while (x !== 7) {
+                if (y !== 0 && ladder[x][y - 1] === 1) {
+                    y -= 2;
+                    thePath.push({ horizontal: 38 + 37.5 * y, vertical: 70 + 40 * x });
+                    x += 1;
+                    thePath.push({ horizontal: 38 + 37.5 * y, vertical: 70 + 40 * x });
+                }
+                else if (y !== ladder[0].length - 1 && ladder[x][y + 1] === 1) {
+                    y += 2;
+                    thePath.push({ horizontal: 38 + 37.5 * y, vertical: 70 + 40 * x });
+                    x += 1;
+                    thePath.push({ horizontal: 38 + 37.5 * y, vertical: 70 + 40 * x });
+                }
+                else {
+                    x += 1;
+                    thePath.push({ horizontal: 38 + 37.5 * y, vertical: 70 + 40 * x });
+                }
+            }
+            thePath.push({ horizontal: 38 + 37.5 * y, vertical: 360 });
+            paths.push(thePath);
+        }
+
+        // 2. save the results
+        // The first element of 'resultsBetIdx' is the index of bets for the first character,
+        // and the second, and the third...
+        for (let i = 0; i < paths.length; i++) {
+            resultsBetIdx.push((paths[i][paths[i].length - 1].horizontal - 38) / 75);
+        }
+    };
+
+    const characterClickHandler = (characterNum) => {
+        let canvas = document.getElementById('canvas');
+
+        if (canvas.getContext) {
+            let ctx = canvas.getContext('2d');
+
+            if (selectedCharacterIdx === characterNum) { // when same character is clicked twice in a row
+                // clearing the selected path
+                ctx.strokeStyle = 'black';
+                ctx.beginPath();
+                ctx.moveTo(paths[characterNum][0].horizontal, paths[characterNum][0].vertical);
+                for (let i = 1; i < paths[characterNum].length; i++) {
+                    ctx.lineTo(paths[characterNum][i].horizontal, paths[characterNum][i].vertical);
+                }
+                ctx.stroke();
+
+                selectedCharacterIdx = -1;
+            }
+            else {
+                // clearing previous selected path
+                if (selectedCharacterIdx !== -1) {
+                    ctx.strokeStyle = 'black';
+                    ctx.beginPath();
+                    ctx.moveTo(paths[selectedCharacterIdx][0].horizontal, paths[selectedCharacterIdx][0].vertical);
+                    for (let i = 1; i < paths[selectedCharacterIdx].length; i++) {
+                        ctx.lineTo(paths[selectedCharacterIdx][i].horizontal, paths[selectedCharacterIdx][i].vertical);
+                    }
+                    ctx.stroke();
+                }
+
+                // go down the ladder
+                ctx.strokeStyle = 'red';
+                ctx.beginPath();
+                ctx.moveTo(paths[characterNum][0].horizontal, paths[characterNum][0].vertical);
+                for (let i = 1; i < paths[characterNum].length; i++) {
+                    ctx.lineTo(paths[characterNum][i].horizontal, paths[characterNum][i].vertical);
+                }
+                ctx.stroke();
+
+                selectedCharacterIdx = characterNum;
+            }
+        }
+    };
+
+    const resultsButtonHandler = () => {
+        context.setResultsBetIdx(resultsBetIdx);
+        navigate('/results');
     };
 
     useEffect(() => {
         drawLadder();
+        getResults();
     }, []);
 
     return <div>
@@ -111,7 +201,8 @@ const Ladder2 = () => {
             <div className={styles.characters}>
                 {
                     context.bets.map((bet, index) => {
-                        return <img key={index} alt={index + 1} src={`/images/${index + 1}.png`} width="55" className={styles.character}></img>;
+                        return <img key={index} alt={index + 1} src={`/images/${index + 1}.png`} width="55" className={styles.character}
+                            onClick={() => characterClickHandler(index)} />;
                     })
                 }
             </div>
@@ -124,7 +215,7 @@ const Ladder2 = () => {
                 }
             </div>
         </div>
-        <button onClick={() => navigate('/results')}>View all results</button>
+        <button onClick={resultsButtonHandler}>View all results</button>
     </div>;
 };
 export default Ladder2;

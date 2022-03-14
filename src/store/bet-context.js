@@ -4,18 +4,23 @@ export const BetContext = createContext({
     numOfBets: 0,
     setNumOfBets: () => { },
     bets: [],
-    setBets: () => { }
+    setBets: () => { },
+    resultsBetIdx: [],
+    setResultsBetIdx: () => { }
 });
 
 const BetProvider = (props) => {
     const [numOfBets, setNumOfBets] = useState(6);
     const [bets, setBets] = useState([]);
+    const [resultsBetIdx, setResultsBetIdx] = useState([]);
 
     const contextValue = {
         numOfBets: numOfBets,
         setNumOfBets: setNumOfBets,
         bets: bets,
-        setBets: setBets
+        setBets: setBets,
+        resultsBetIdx: resultsBetIdx,
+        setResultsBetIdx: setResultsBetIdx
     };
 
     return <BetContext.Provider value={contextValue}>

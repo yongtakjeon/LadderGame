@@ -8,6 +8,7 @@
 }
 .character {
   margin: 0 10px;
+  cursor: pointer;
 }
 canvas {
   display: block;
