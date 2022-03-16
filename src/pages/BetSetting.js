@@ -2,9 +2,9 @@ import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { BetContext } from '../store/bet-context';
-import styles from './Ladder1.module.css';
+import styles from './BetSetting.module.css';
 
-const Ladder1 = () => {
+const BetSetting = () => {
     const context = useContext(BetContext);
     const navigate = useNavigate();
     const headerContent = "Write down your bets.";
@@ -53,7 +53,7 @@ const Ladder1 = () => {
         if (isAllEntered === true) {
             // save the bets in Context, and navigate to 'ladder2' page
             context.setBets(bets);
-            navigate('/ladder2');
+            navigate('/ladder');
         }
         // if there is an empty bet
         else {
@@ -89,4 +89,4 @@ const Ladder1 = () => {
         <button onClick={gameStartHandler}>Ladder Game Start</button>
     </div>;
 };
-export default Ladder1;
+export default BetSetting;

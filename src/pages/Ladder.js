@@ -2,9 +2,9 @@ import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { BetContext } from '../store/bet-context';
-import styles from './Ladder2.module.css';
+import styles from './Ladder.module.css';
 
-const Ladder2 = () => {
+const Ladder = () => {
     const context = useContext(BetContext);
     const navigate = useNavigate();
     const headerContent = 'After selecting each Marvel character for each person, click on the character to see the results.';
@@ -323,4 +323,4 @@ const Ladder2 = () => {
         <button onClick={resultsButtonHandler}>View all results</button>
     </div>;
 };
-export default Ladder2;
+export default Ladder;

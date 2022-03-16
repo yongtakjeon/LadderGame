@@ -31,7 +31,7 @@ const Main = () => {
             <button className={context.numOfBets === 12 ? styles.disabledButton : styles.button} onClick={increaseNum}>+</button>
 
         </div>
-        <Link to='/ladder1' className={styles.startButton}>Start</Link>
+        <Link to='/betSetting' className={styles.startButton}>Start</Link>
     </div>;
 };
 
