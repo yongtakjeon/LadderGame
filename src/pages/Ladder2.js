@@ -21,10 +21,7 @@ const Ladder2 = () => {
     let paths = []; // the paths of each character
     let resultsBetIdx = [];
     let selectedCharacterIdx = -1;
-    let isBetsChecked = []; // for highlighting for the bets which already have been checked
-    for (let i = 0; i < context.numOfBets; i++) {
-        isBetsChecked.push(false);
-    }
+    let checkedCharNums = [];
 
     const drawLadder = () => {
         let canvas = document.getElementById('canvas');
@@ -32,8 +29,9 @@ const Ladder2 = () => {
         if (canvas.getContext) {
             let ctx = canvas.getContext('2d');
 
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 5;
             ctx.lineCap = 'round';
+            ctx.strokeStyle = 'black';
 
             // 1. for the basic ladder
             for (let i = 0; i < context.numOfBets; i++) {
@@ -153,6 +151,7 @@ const Ladder2 = () => {
 
             // if selecting the character is not the first time, clear previous selected path
             if (selectedCharacterIdx !== -1) {
+                ctx.lineWidth = 5;
                 ctx.strokeStyle = 'black';
                 ctx.beginPath();
                 ctx.moveTo(paths[selectedCharacterIdx][0].horizontal, paths[selectedCharacterIdx][0].vertical);
@@ -161,20 +160,133 @@ const Ladder2 = () => {
                 }
                 ctx.stroke();
             }
+            selectedCharacterIdx = characterNum;
 
             // go down the ladder
+            ctx.lineWidth = 4;
             ctx.strokeStyle = 'red';
             ctx.beginPath();
             ctx.moveTo(paths[characterNum][0].horizontal, paths[characterNum][0].vertical);
-            for (let i = 1; i < paths[characterNum].length; i++) {
-                ctx.lineTo(paths[characterNum][i].horizontal, paths[characterNum][i].vertical);
+
+            if (checkedCharNums.includes(characterNum)) {
+                // if this character's result is already checked before -> no animation
+                for (let i = 1; i < paths[characterNum].length; i++) {
+                    ctx.lineTo(paths[characterNum][i].horizontal, paths[characterNum][i].vertical);
+                }
+                ctx.stroke();
             }
-            ctx.stroke();
+            else {
+                // if this character's result is about to check for the first time -> animation
+                checkedCharNums.push(characterNum);
+                let i = 0;
+                let j = 0;
+                const animationGoDown = () => {
+                    if (i < paths[characterNum].length - 1) {
+                        if (paths[characterNum][i].vertical < paths[characterNum][i + 1].vertical) {
+                            const drawVerticalLine = () => {
+                                j += 5; // animation speed
+                                if (selectedCharacterIdx === characterNum) { // draw the line if another character is not clicked
+                                    if (paths[characterNum][i].vertical + j > paths[characterNum][i + 1].vertical) {
+                                        ctx.lineTo(paths[characterNum][i].horizontal, paths[characterNum][i + 1].vertical);
+                                    }
+                                    else {
+                                        ctx.lineTo(paths[characterNum][i].horizontal, paths[characterNum][i].vertical + j);
+                                    }
+                                    ctx.stroke();
+                                }
 
-            selectedCharacterIdx = characterNum;
+                                let rafId = requestAnimationFrame(drawVerticalLine);
 
-            // highlight for the bet which was checked
-            document.getElementById(`bet${resultsBetIdx[characterNum]}`).style.color = 'red';
+                                // highlight the bet which was just checked
+                                if (paths[characterNum][i].vertical + j >= 360) {
+                                    document.getElementById(`bet${resultsBetIdx[characterNum]}`).style.color = 'red';
+                                }
+
+                                if (paths[characterNum][i].vertical + j >= paths[characterNum][i + 1].vertical) {
+                                    j = 0;
+                                    i++;
+                                    cancelAnimationFrame(rafId);
+                                    animationGoDown();
+                                }
+
+                                // if another character is clicked while it goes down the ladder, just cancel this animation
+                                if (selectedCharacterIdx !== characterNum) {
+                                    cancelAnimationFrame(rafId);
+                                    // highlight the bet which was checked
+                                    document.getElementById(`bet${resultsBetIdx[characterNum]}`).style.color = 'red';
+                                }
+                            }
+                            drawVerticalLine();
+                        }
+                        else if (paths[characterNum][i].horizontal < paths[characterNum][i + 1].horizontal) {
+                            const drawRightHorizontalLine = () => {
+                                j += 5; // animation speed
+                                if (selectedCharacterIdx === characterNum) { // draw the line if another character is not clicked
+                                    if (paths[characterNum][i].horizontal + j > paths[characterNum][i + 1].horizontal) {
+                                        ctx.lineTo(paths[characterNum][i + 1].horizontal, paths[characterNum][i].vertical);
+                                    }
+                                    else {
+                                        ctx.lineTo(paths[characterNum][i].horizontal + j, paths[characterNum][i].vertical);
+                                    }
+                                    ctx.stroke();
+                                }
+
+                                let rafId = requestAnimationFrame(drawRightHorizontalLine);
+
+                                if (paths[characterNum][i].horizontal + j >= paths[characterNum][i + 1].horizontal) {
+                                    j = 0;
+                                    i++;
+                                    cancelAnimationFrame(rafId);
+                                    animationGoDown();
+                                }
+
+                                // if another character is clicked while it goes down the ladder, just cancel this animation
+                                if (selectedCharacterIdx !== characterNum) {
+                                    cancelAnimationFrame(rafId);
+                                    // highlight the bet which was checked
+                                    document.getElementById(`bet${resultsBetIdx[characterNum]}`).style.color = 'red';
+                                }
+                            }
+                            drawRightHorizontalLine();
+                        }
+                        else if (paths[characterNum][i].horizontal > paths[characterNum][i + 1].horizontal) {
+                            const drawLeftHorizontalLine = () => {
+                                j += 5; // animation speed
+                                if (selectedCharacterIdx === characterNum) { // draw the line if another character is not clicked
+                                    if (paths[characterNum][i].horizontal - j < paths[characterNum][i + 1].horizontal) {
+                                        ctx.lineTo(paths[characterNum][i + 1].horizontal, paths[characterNum][i].vertical);
+                                    }
+                                    else {
+                                        ctx.lineTo(paths[characterNum][i].horizontal - j, paths[characterNum][i].vertical);
+                                    }
+                                    ctx.stroke();
+                                }
+
+                                let rafId = requestAnimationFrame(drawLeftHorizontalLine);
+
+                                if (paths[characterNum][i].horizontal - j <= paths[characterNum][i + 1].horizontal) {
+                                    j = 0;
+                                    i++;
+                                    cancelAnimationFrame(rafId);
+                                    animationGoDown();
+                                }
+
+                                // if another character is clicked while it goes down the ladder, just cancel this animation
+                                if (selectedCharacterIdx !== characterNum) {
+                                    cancelAnimationFrame(rafId);
+                                    // highlight the bet which was checked
+                                    document.getElementById(`bet${resultsBetIdx[characterNum]}`).style.color = 'red';
+                                }
+                            }
+                            drawLeftHorizontalLine();
+                        }
+                    }
+                }
+                animationGoDown();
+            }
+
+            // highlight the character which was just checked
+            document.getElementById(`char${characterNum}`).style.opacity = '0.5';
         }
     };
 
@@ -194,7 +306,7 @@ const Ladder2 = () => {
             <div className={styles.characters}>
                 {
                     context.bets.map((bet, index) => {
-                        return <img key={index} alt={index + 1} src={`/images/${index + 1}.png`} width="55" className={styles.character}
+                        return <img key={index} id={`char${index}`} alt={index + 1} src={`/images/${index + 1}.png`} width="55" className={styles.character}
                             onClick={() => characterClickHandler(index)} />;
                     })
                 }

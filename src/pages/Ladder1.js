@@ -15,15 +15,15 @@ const Ladder1 = () => {
         betNums.push(i + 1);
     }
 
-
     const drawLadder = () => {
         let canvas = document.getElementById('canvas');
 
         if (canvas.getContext) {
             let ctx = canvas.getContext('2d');
 
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 5;
             ctx.lineCap = 'round';
+            ctx.strokeStyle = 'black';
 
             for (let i = 0; i < context.numOfBets; i++) {
                 ctx.beginPath();
