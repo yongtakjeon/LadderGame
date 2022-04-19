@@ -1,7 +1,15 @@
-import styles from './Header.module.css';
+import { Typography } from '@mui/material';
 
 const Header = ({ content }) => {
-    return <div className={styles.header}> {content} </div>;
+
+    return <Typography
+        variant="subtitle1"
+        align='center'
+        borderBottom="solid 1px"
+        paddingBottom="20px"
+        fontWeight="bold">
+        {content}
+    </Typography>;
 };
 
 export default Header;

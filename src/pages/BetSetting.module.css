@@ -1,6 +1,7 @@
 .entire {
   overflow-x: scroll;
   margin-top: 20px;
+  margin-bottom: 30px;
 }
 .characters {
   white-space: nowrap;
@@ -8,6 +9,7 @@
 }
 .character {
   margin: 0 10px;
+  border-radius: 15%;
 }
 canvas {
   display: block;
@@ -16,7 +18,9 @@ canvas {
 .inputs {
   white-space: nowrap;
   text-align: center;
+  margin-bottom: 10px;
 }
 .input {
   margin: 0 2.25px;
+  min-width: 57.5px;
 }

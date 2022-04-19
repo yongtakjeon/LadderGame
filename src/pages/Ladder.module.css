@@ -1,6 +1,7 @@
 .entire {
   overflow-x: scroll;
   margin-top: 20px;
+  margin-bottom: 25px;
 }
 .characters {
   white-space: nowrap;
@@ -8,6 +9,7 @@
 }
 .character {
   margin: 0 10px;
+  border-radius: 15%;
   cursor: pointer;
 }
 canvas {
@@ -17,9 +19,5 @@ canvas {
 .bets {
   white-space: nowrap;
   text-align: center;
-}
-.bet {
-  display: inline-block;
-  width: 70px;
-  margin: 0 2.5px;
+  margin-bottom: 10px;
 }

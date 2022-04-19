@@ -1,3 +1,4 @@
+import { Button, Container } from '@mui/material';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
@@ -65,7 +66,7 @@ const BetSetting = () => {
         drawLadder();
     }, []);
 
-    return <div>
+    return <>
         <Header content={headerContent} />
         <div className={styles.entire}>
             <div className={styles.characters}>
@@ -79,14 +80,16 @@ const BetSetting = () => {
             <div className={styles.inputs}>
                 {
                     betNums.map((betNum, index) => {
-                        return <input key={index} id={betNum} size="5" className={styles.input}></input>;
+                        return <input key={index} id={betNum} size="5" maxlength="7" className={styles.input}></input>;
                     })
                 }
             </div>
         </div>
 
-        <button onClick={() => navigate(-1)}>Go Back</button>
-        <button onClick={gameStartHandler}>Ladder Game Start</button>
-    </div>;
+        <Container sx={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+            <Button variant="outlined" size="large" sx={{ mr: '20px' }} onClick={() => navigate(-1)}>Go Back</Button>
+            <Button variant="contained" size="large" color='secondary' onClick={gameStartHandler}>Ladder Game Start</Button>
+        </Container>
+    </>;
 };
 export default BetSetting;

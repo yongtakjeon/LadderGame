@@ -1,3 +1,4 @@
+import { Button, Typography } from '@mui/material';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
@@ -300,7 +301,18 @@ const Ladder = () => {
         getResults();
     }, []);
 
-    return <div>
+    // MUI Styles
+    const betStyles = {
+        display: 'inline-block',
+        width: '70px',
+        margin: '0 2.5px',
+    };
+    const resultButtonStyles = {
+        display: 'block',
+        margin: '0 auto'
+    };
+
+    return <>
         <Header content={headerContent} />
         <div className={styles.entire}>
             <div className={styles.characters}>
@@ -315,12 +327,12 @@ const Ladder = () => {
             <div className={styles.bets}>
                 {
                     context.bets.map((bet, index) => {
-                        return <span key={index} id={`bet${index}`} className={styles.bet}>{bet}</span>;
+                        return <Typography key={index} id={`bet${index}`} sx={betStyles}>{bet}</Typography>;
                     })
                 }
             </div>
         </div>
-        <button onClick={resultsButtonHandler}>View all results</button>
-    </div>;
+        <Button color='success' variant="contained" size="large" sx={resultButtonStyles} onClick={resultsButtonHandler}>View all results</Button>
+    </>;
 };
 export default Ladder;
