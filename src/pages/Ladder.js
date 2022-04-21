@@ -147,6 +147,11 @@ const Ladder = () => {
     };
 
     const characterClickHandler = (characterNum) => {
+        // if currently selected character is clicked again, do nothing. 
+        if (characterNum === selectedCharacterIdx) {
+            return;
+        }
+
         let canvas = document.getElementById('canvas');
 
         if (canvas.getContext) {
