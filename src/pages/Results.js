@@ -1,18 +1,13 @@
 import { Avatar, Button, Container, Typography } from '@mui/material';
-import { useContext } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import { BetContext } from '../store/bet-context';
 
 const Results = () => {
-    const context = useContext(BetContext);
-    const navigate = useNavigate();
-
     const headerContent = 'Capture and save the results.';
-
-    for (let i = 0; i < context.bets.length; i++) {
-        console.log('Character ' + i + ' - ' + context.bets[context.resultsBetIdx[i]]);
-    }
+    const bets = useSelector(state => state.bets);
+    const resultsBetIdx = useSelector(state => state.resultsBetIdx);
+    const navigate = useNavigate();
 
     // MUI styles
     const resultsStyles = {
@@ -38,17 +33,18 @@ const Results = () => {
         display: 'block',
         margin: '0 auto',
         fontSize: '1.25rem',
+        marginBottom: '50px',
     };
 
     return <>
         <Header content={headerContent} />
         <Container sx={{ marginTop: '35px', marginBottom: '55px' }}>
             {
-                context.resultsBetIdx.map((resultBetIdx, index) => {
+                resultsBetIdx.map((resultBetIdx, index) => {
                     return <Container key={index} sx={resultsStyles}>
                         <Typography variant='h6' color='success.main' sx={numberingStyles}>{index + 1})</Typography>
                         <Avatar alt={index + 1} src={`/images/${index + 1}.png`} sx={characterStyles}></Avatar>
-                        <Typography variant='h6' sx={resultStyle}>{context.bets[resultBetIdx]}</Typography>
+                        <Typography variant='h6' sx={resultStyle}>{bets[resultBetIdx]}</Typography>
                     </Container>;
                 })
             }

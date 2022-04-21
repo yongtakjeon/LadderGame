@@ -1,23 +1,30 @@
-import { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import { BetContext } from '../store/bet-context';
 import { Typography, Button, Container } from '@mui/material';
+import { useDispatch } from 'react-redux';
 
 const Main = () => {
-    const context = useContext(BetContext);
     const headerContent = "Set the number of participant. Up to 12 people can play.";
+    const dispatch = useDispatch();
+    const [numOfBets, setNumOfBets] = useState(6);
+    const navigate = useNavigate();
 
     const decreaseNum = () => {
-        if (context.numOfBets > 2) {
-            context.setNumOfBets(context.numOfBets - 1);
+        if (numOfBets > 2) {
+            setNumOfBets(numOfBets - 1);
         }
     };
 
     const increaseNum = () => {
-        if (context.numOfBets < 12) {
-            context.setNumOfBets(context.numOfBets + 1);
+        if (numOfBets < 12) {
+            setNumOfBets(numOfBets + 1);
         }
+    };
+
+    const startButtonHandler = () => {
+        dispatch({ type: 'setNumOfBets', numOfBets: numOfBets });
+        navigate('/betSetting');
     };
 
     // MUI styles
@@ -56,7 +63,7 @@ const Main = () => {
                 sx={numButtonStyle}>
                 -
             </Button>
-            <Typography sx={{ fontSize: '4rem' }}>{context.numOfBets}</Typography>
+            <Typography sx={{ fontSize: '4rem' }}>{numOfBets}</Typography>
             <Button
                 onClick={increaseNum}
                 color='warning'
@@ -65,15 +72,14 @@ const Main = () => {
             </Button>
         </Container>
         <Container sx={{ textAlign: 'center' }}>
-            <Link to='/betSetting' style={{ textDecoration: 'none' }}>
-                <Button
-                    variant="contained"
-                    size="large"
-                    color='secondary'
-                    sx={startButtonStyle}>
-                    Start
-                </Button>
-            </Link>
+            <Button
+                variant="contained"
+                size="large"
+                color='secondary'
+                sx={startButtonStyle}
+                onClick={startButtonHandler}>
+                Start
+            </Button>
         </Container>
     </>;
 

@@ -1,18 +1,19 @@
 import { Button, Container } from '@mui/material';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import { BetContext } from '../store/bet-context';
 import styles from './BetSetting.module.css';
 
 const BetSetting = () => {
-    const context = useContext(BetContext);
-    const navigate = useNavigate();
     const headerContent = "Write down your bets.";
+    const numOfBets = useSelector(state => state.numOfBets);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     // for displaying characters and <input> tags
     let betNums = [];
-    for (let i = 0; i < context.numOfBets; i++) {
+    for (let i = 0; i < numOfBets; i++) {
         betNums.push(i + 1);
     }
 
@@ -26,7 +27,7 @@ const BetSetting = () => {
             ctx.lineCap = 'round';
             ctx.strokeStyle = 'black';
 
-            for (let i = 0; i < context.numOfBets; i++) {
+            for (let i = 0; i < numOfBets; i++) {
                 ctx.beginPath();
                 ctx.moveTo(38 + i * 75, 20);
                 ctx.lineTo(38 + i * 75, 360);
@@ -40,11 +41,11 @@ const BetSetting = () => {
         let bets = [];
         let isAllEntered = true;
 
-        for (let i = 0; i < context.numOfBets; i++) {
+        for (let i = 0; i < numOfBets; i++) {
             bets.push(document.getElementById(i + 1).value);
         }
 
-        for (let i = 0; i < context.numOfBets; i++) {
+        for (let i = 0; i < numOfBets; i++) {
             if (bets[i] === '') {
                 isAllEntered = false;
             }
@@ -52,8 +53,8 @@ const BetSetting = () => {
 
         // if all the bets are entered
         if (isAllEntered === true) {
-            // save the bets in Context, and navigate to 'ladder2' page
-            context.setBets(bets);
+            // save the bets in the state, and navigate to 'ladder2' page
+            dispatch({ type: 'setBets', bets: bets });
             navigate('/ladder');
         }
         // if there is an empty bet
@@ -76,7 +77,7 @@ const BetSetting = () => {
                     })
                 }
             </div>
-            <canvas id="canvas" width={context.numOfBets * 75} height="375"></canvas>
+            <canvas id="canvas" width={numOfBets * 75} height="375"></canvas>
             <div className={styles.inputs}>
                 {
                     betNums.map((betNum, index) => {

@@ -1,14 +1,16 @@
 import { Button, Typography } from '@mui/material';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import { BetContext } from '../store/bet-context';
 import styles from './Ladder.module.css';
 
 const Ladder = () => {
-    const context = useContext(BetContext);
-    const navigate = useNavigate();
     const headerContent = 'After selecting each Marvel character for each person, click on the character to see the results.';
+    const numOfBets = useSelector(state => state.numOfBets);
+    const bets = useSelector(state => state.bets);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     let ladder = [
         [1],
@@ -35,7 +37,7 @@ const Ladder = () => {
             ctx.strokeStyle = 'black';
 
             // 1. for the basic ladder
-            for (let i = 0; i < context.numOfBets; i++) {
+            for (let i = 0; i < numOfBets; i++) {
                 ctx.beginPath();
                 ctx.moveTo(38 + i * 75, 20);
                 ctx.lineTo(38 + i * 75, 360);
@@ -45,7 +47,7 @@ const Ladder = () => {
             // 2. for the drawing full ladder
             // 2a) making basic ladder with 0, 1
             for (let i = 0; i < ladder.length; i++) {
-                for (let j = 1; j < context.numOfBets; j++) {
+                for (let j = 1; j < numOfBets; j++) {
                     ladder[i].push(0);
                     ladder[i].push(1);
                 }
@@ -109,7 +111,7 @@ const Ladder = () => {
     const getResults = () => {
         // 1. go down the ladder and save the each path
         // The number of the paths would be the same with the number of bets.
-        for (let i = 0; i < context.numOfBets; i++) {
+        for (let i = 0; i < numOfBets; i++) {
             let x = 0;
             let y = i * 2;
             let thePath = [{ horizontal: 38 + 37.5 * y, vertical: 20 }];
@@ -137,7 +139,7 @@ const Ladder = () => {
         }
 
         // 2. save the results
-        // The first element of 'resultsBetIdx' is the index of 'context.bets' for the first character,
+        // The first element of 'resultsBetIdx' is the index of 'bets' for the first character,
         // and the second, and the third...
         for (let i = 0; i < paths.length; i++) {
             resultsBetIdx.push((paths[i][paths[i].length - 1].horizontal - 38) / 75);
@@ -292,7 +294,7 @@ const Ladder = () => {
     };
 
     const resultsButtonHandler = () => {
-        context.setResultsBetIdx(resultsBetIdx);
+        dispatch({ type: 'setResultsBetIdx', resultsBetIdx: resultsBetIdx });
         navigate('/results');
     };
 
@@ -317,16 +319,16 @@ const Ladder = () => {
         <div className={styles.entire}>
             <div className={styles.characters}>
                 {
-                    context.bets.map((bet, index) => {
+                    bets.map((bet, index) => {
                         return <img key={index} id={`char${index}`} alt={index + 1} src={`/images/${index + 1}.png`} width="55" className={styles.character}
                             onClick={() => characterClickHandler(index)} />;
                     })
                 }
             </div>
-            <canvas id="canvas" width={context.numOfBets * 75} height="375"></canvas>
+            <canvas id="canvas" width={numOfBets * 75} height="375"></canvas>
             <div className={styles.bets}>
                 {
-                    context.bets.map((bet, index) => {
+                    bets.map((bet, index) => {
                         return <Typography key={index} id={`bet${index}`} sx={betStyles}>{bet}</Typography>;
                     })
                 }
