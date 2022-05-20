@@ -53,7 +53,11 @@ const Ladder = () => {
                 }
             }
 
-            // 2b) making full ladder
+            // 2b) making full ladder (adding horizontal ladder)
+            // There are 2 rules for making horizontal ladder:
+            // Rule 1 - There can't be two adjacent horizontal ladder
+            // Rule 2 - There must be at least one horizontal ladder in one vertical ladder
+
             // if there is an empty line, loop again
             let hasEmptyLine;
             do {
@@ -62,7 +66,7 @@ const Ladder = () => {
 
                         ladder[i][j] = Math.random() < 0.5 ? 0 : 1;
 
-                        // there can't be two adjacent lines
+                        // there can't be two adjacent horizontal lines
                         if (j !== 1 && ladder[i][j - 2] === 1) {
                             ladder[i][j] = 0;
                         }
@@ -86,6 +90,8 @@ const Ladder = () => {
             } while (hasEmptyLine);
 
             // now, based on the 2d array, 'ladder', draw the full ladder
+            // 'ladderForDrawing' is 2d array which is sets of only horizontal part of the ladder.
+            // By creating 'ladderForDrawing', it is easier to work with Canvas API drawing horizontal part of the ladder.
             let ladderForDrawing = [];
             for (let i = 0; i < ladder.length; i++) {
                 let oneRow = [];
@@ -110,6 +116,12 @@ const Ladder = () => {
 
     const getResults = () => {
         // 1. go down the ladder and save the each path
+        // The algorithm of going down the ladder:
+        // 1) Check the left side if it is '1' -> If it is '1', go to the left side and go down 1 step
+        // 2) Check the right side if it is '1' -> If it is '1', go to the right side and go down 1 step
+        // 3) If both left and right side are '0', just go down 1 step
+        // 4) Loop the above steps until it reaches the end of the ladder
+
         // The number of the paths would be the same with the number of bets.
         for (let i = 0; i < numOfBets; i++) {
             let x = 0;
@@ -190,10 +202,13 @@ const Ladder = () => {
                 let j = 0;
                 const animationGoDown = () => {
                     if (i < paths[characterNum].length - 1) {
+                        // draw vertical ladder
                         if (paths[characterNum][i].vertical < paths[characterNum][i + 1].vertical) {
                             const drawVerticalLine = () => {
                                 j += 5; // animation speed
                                 if (selectedCharacterIdx === characterNum) { // draw the line if another character is not clicked
+                                    // if '[i].vertical + j' became greater than '[i + 1].vertical', just set it to '[i + 1].vertical'.
+                                    // Otherwise, set it to '[i].vertical + j'
                                     if (paths[characterNum][i].vertical + j > paths[characterNum][i + 1].vertical) {
                                         ctx.lineTo(paths[characterNum][i].horizontal, paths[characterNum][i + 1].vertical);
                                     }
@@ -210,6 +225,7 @@ const Ladder = () => {
                                     document.getElementById(`bet${resultsBetIdx[characterNum]}`).style.color = 'red';
                                 }
 
+                                // if '[i].vertical + j' became greater than '[i + 1].vertical', drawing vertical line has to be stopped.
                                 if (paths[characterNum][i].vertical + j >= paths[characterNum][i + 1].vertical) {
                                     j = 0;
                                     i++;
@@ -226,10 +242,13 @@ const Ladder = () => {
                             }
                             drawVerticalLine();
                         }
+                        // draw right horizontal ladder
                         else if (paths[characterNum][i].horizontal < paths[characterNum][i + 1].horizontal) {
                             const drawRightHorizontalLine = () => {
                                 j += 5; // animation speed
                                 if (selectedCharacterIdx === characterNum) { // draw the line if another character is not clicked
+                                    // if '[i].horizontal + j' became greater than '[i + 1].horizontal', just set it to '[i + 1].horizontal'.
+                                    // Otherwise, set it to '[i].horizontal + j'
                                     if (paths[characterNum][i].horizontal + j > paths[characterNum][i + 1].horizontal) {
                                         ctx.lineTo(paths[characterNum][i + 1].horizontal, paths[characterNum][i].vertical);
                                     }
@@ -241,6 +260,7 @@ const Ladder = () => {
 
                                 let rafId = requestAnimationFrame(drawRightHorizontalLine);
 
+                                // if '[i].horizontal + j' became greater than '[i + 1].horizontal', drawing right horizontal line has to be stopped.
                                 if (paths[characterNum][i].horizontal + j >= paths[characterNum][i + 1].horizontal) {
                                     j = 0;
                                     i++;
@@ -257,10 +277,13 @@ const Ladder = () => {
                             }
                             drawRightHorizontalLine();
                         }
+                        // draw left horizontal ladder
                         else if (paths[characterNum][i].horizontal > paths[characterNum][i + 1].horizontal) {
                             const drawLeftHorizontalLine = () => {
                                 j += 5; // animation speed
                                 if (selectedCharacterIdx === characterNum) { // draw the line if another character is not clicked
+                                    // if '[i].horizontal - j' became less than '[i + 1].horizontal', just set it to '[i + 1].horizontal'.
+                                    // Otherwise, set it to '[i].horizontal - j'
                                     if (paths[characterNum][i].horizontal - j < paths[characterNum][i + 1].horizontal) {
                                         ctx.lineTo(paths[characterNum][i + 1].horizontal, paths[characterNum][i].vertical);
                                     }
@@ -272,6 +295,7 @@ const Ladder = () => {
 
                                 let rafId = requestAnimationFrame(drawLeftHorizontalLine);
 
+                                // if '[i].horizontal - j' became less than '[i + 1].horizontal', drawing left horizontal line has to be stopped.
                                 if (paths[characterNum][i].horizontal - j <= paths[characterNum][i + 1].horizontal) {
                                     j = 0;
                                     i++;
